@@ -4,7 +4,6 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.team.musicex.databinding.ActivityMainBinding
@@ -12,12 +11,16 @@ import com.team.musicex.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var binding: ActivityMainBinding
+    private val mapMusicInfo: MutableMap<String, Int> = mutableMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        mediaPlayer = MediaPlayer.create(this, R.raw.cold_play_viva_la_diva)
+
+        getAllMusicInfo()
+        mediaPlayer = MediaPlayer.create(this, mapMusicInfo.values.first())
+        binding.tvTitleMusic.text = formatterTitleMusic(mapMusicInfo.keys.first())
         initSeekBar()
         onClickButtonPlay()
         trackingMovementSeekBar()
@@ -72,5 +75,17 @@ class MainActivity : AppCompatActivity() {
 
             }
         })
+    }
+
+    private fun getAllMusicInfo() {
+        val fields = R.raw::class.java.fields
+        for (index in fields.indices) {
+            val rid = fields[index].getInt(fields[index])
+            mapMusicInfo[fields[index].name] = rid
+        }
+    }
+
+    private fun formatterTitleMusic(title: String): String {
+        return title.replace("_", " ")
     }
 }

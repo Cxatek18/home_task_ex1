@@ -24,7 +24,6 @@
         android:layout_marginTop="30dp"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
-        android:text="League of Legends, The Glitch Mob, Mako feat. The Word Alive - RISE"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="24sp"
