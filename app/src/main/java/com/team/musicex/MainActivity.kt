@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.team.musicex.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -21,9 +22,20 @@ class MainActivity : AppCompatActivity() {
         getAllMusicInfo()
         mediaPlayer = MediaPlayer.create(this, mapMusicInfo.values.first())
         binding.tvTitleMusic.text = formatterTitleMusic(mapMusicInfo.keys.first())
+        checkVisibleButtons()
         initSeekBar()
         onClickButtonPlay()
         trackingMovementSeekBar()
+
+
+        binding.btnNext.setOnClickListener {
+            mediaPlayer.stop()
+            clickButtonNextMusic()
+        }
+        binding.btnPrevious.setOnClickListener {
+            mediaPlayer.stop()
+            clickButtonPreviousMusic()
+        }
     }
 
     override fun onDestroy() {
@@ -87,5 +99,38 @@ class MainActivity : AppCompatActivity() {
 
     private fun formatterTitleMusic(title: String): String {
         return title.replace("_", " ")
+    }
+
+    private fun clickButtonNextMusic() {
+        indexMusic += 1
+        switchingMusic(indexMusic)
+    }
+
+    private fun clickButtonPreviousMusic() {
+        indexMusic -= 1
+        switchingMusic(indexMusic)
+    }
+
+    private fun switchingMusic(newIndex: Int) {
+        checkVisibleButtons()
+        for (currentIndex in mapMusicInfo.keys.indices) {
+            if (currentIndex == newIndex) {
+                val newIdMusic = mapMusicInfo.values.toList()[newIndex]
+                val newTitleMusic = mapMusicInfo.keys.toList()[newIndex]
+                mediaPlayer = MediaPlayer.create(this, newIdMusic)
+                binding.btnPlay.setImageResource(R.drawable.pause_btn)
+                mediaPlayer.start()
+                binding.tvTitleMusic.text = formatterTitleMusic(newTitleMusic)
+            }
+        }
+    }
+
+    private fun checkVisibleButtons() {
+        binding.btnPrevious.isVisible = indexMusic != 0
+        binding.btnNext.isVisible = indexMusic != mapMusicInfo.size - 1
+    }
+
+    companion object {
+        var indexMusic = 0
     }
 }
